@@ -17,6 +17,5 @@ server.listen(3000, () => {
   const router = new Router(app)
   router.get_view('/','index.html')
   router.get_page('/page/:name')
-  console.info(router)
 });
 module.exports = {server,io,app}

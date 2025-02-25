@@ -47,13 +47,13 @@ app.controller('contractsApp', function($scope,$location, $sce) {
   window.$location  = $location;
   $scope.userMan    = new UserMan()
   $scope.user       = $scope.userMan.retrieveUser()
-  if(!$scope.user)
-  {
-    window.location.href = '#!/login';
-    window.location.reload();  
-  }
   $scope.currentpath = ()=>{
     return $location.$$path
+  }
+  if(!$scope.user && $scope.currentpath() != '/page/login')
+  {
+    console.info($scope.currentpath())
+    document.location.href = '#!/page/login';
   }
   $scope.currenturl = ()=>{
     return $location.$$protocol + "://" + $location.$$host + ":" + $location.$$port

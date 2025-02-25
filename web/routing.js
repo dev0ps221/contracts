@@ -17,6 +17,7 @@ class Router{
     }
     serve_file(res,file_path)
     {
+        console.info('send file => ',file_path)
         res.sendFile(join(this.path, file_path));
         return this
     }
@@ -52,7 +53,12 @@ class Router{
             method=>{
                 this.routes[method].map(
                     ({route,action})=>{
-                        this.app[method](route,action)
+                        this.app[method](
+                            route,(req,res)=>{
+                                console.info('route.'+method+'('+route+')')
+                                action(req,res)
+                            }
+                        )
                     }
                 )
             }
@@ -62,14 +68,18 @@ class Router{
     get_view(route,viewname)
     {
         this.get(route,(req,res)=>{
-            return this.serve_file(res,viewname)
+            this.serve_file(res,viewname)
+            return this
         })
         return this
     }
     get_page(route)
     {
+        console.info('routed...',route)
         this.get(route,(req,res)=>{
-            const viewname = + req.params.name
+            console.info('route is ',req.params.name)
+            const viewname = 'pages/' + req.params.name + '.html'
+            console.info('viewname is ',viewname)
             return this.serve_file(res,viewname)
         })
         return this

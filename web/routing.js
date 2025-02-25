@@ -66,6 +66,14 @@ class Router{
         })
         return this
     }
+    get_page(route)
+    {
+        this.get(route,(req,res)=>{
+            const viewname = + req.params.name
+            return this.serve_file(res,viewname)
+        })
+        return this
+    }
     get(route,action)
     {
         this.routes.get.push({route,action})

@@ -1,4 +1,4 @@
-var app = angular.module('contracts', []);
+var app = angular.module('contracts', ["ngRoute"]);
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -8,18 +8,33 @@ const triggerUploadBox = inputId=>{
         $("#"+inputId)[0] . click()
     }
 }
-// app.config(function($routeProvider) {
-//     $routeProvider
-//     .when("/", {
-//       templateUrl : "page/index"
-//     })
-//     .when('/page/:pageName', {
-//         // Dynamically load the template based on the pageName
-//         templateUrl: function(params) {
-//             return 'page/' + params.pageName ;
-//         }
-//     })
-//   });
+
+const UserMan = class {
+  user = {}
+  updateUser(user)
+  {
+    localStorage.setItem('user',JSON.stringify(user))
+    return this.retrieveUser()
+  }
+  retrieveUser()
+  {
+    const user = localStorage.getItem('user')
+    this.user = user ? JSON.parse(user) : null
+    return this.user
+  }
+}
+app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+      templateUrl : "page/app"
+    })
+    .when('/page/:pageName', {
+        // Dynamically load the template based on the pageName
+        templateUrl: function(params) {
+            return 'page/' + params.pageName ;
+        }
+    })
+  });
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -30,8 +45,13 @@ app.controller('contractsApp', function($scope,$location, $sce) {
   console.info('contracts is ready...')
   window.$scope     = $scope;
   window.$location  = $location;
- 
-  $scope.user = {name:'dev0ps221'}
+  $scope.userMan    = new UserMan()
+  $scope.user       = $scope.userMan.retrieveUser()
+  if(!$scope.user)
+  {
+    window.location.href = '#!/login';
+    window.location.reload();  
+  }
   $scope.currentpath = ()=>{
     return $location.$$path
   }

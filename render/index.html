@@ -1,0 +1,22 @@
+<html lang="en"  ng-app="contracts" ng-controller="contractsApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Hello</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/bootstrap.min.css">
+    <script src="/jquery.min.js"></script>
+    <script src="/jquery.blockUI.js"></script>
+    <script src="/angular.min.js"></script>
+    <script src="/angular-route.min.js"></script>
+    <script src="/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+    <h2>
+        BIENVENUE A BORD @{{user.name}},
+    </h2>
+</body>
+</html>

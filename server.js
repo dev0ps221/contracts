@@ -16,6 +16,9 @@ server.listen(3000, () => {
   console.log('server running at http://localhost:3000');
   const router = new Router(app)
   router.get_view('/','index.html')
+  router.post('/login',(req,res)=>{
+    console.info('login..',req.body)
+  })
   router.get_page('/page/:name')
 });
 module.exports = {server,io,app}

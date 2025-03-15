@@ -54,8 +54,11 @@ class Router{
                 this.routes[method].map(
                     ({route,action})=>{
                         this.app[method](
-                            route,(req,res)=>{
-                                console.info('route.'+method+'('+route+')')
+                            route,(req,res,data)=>{
+                                if(method == 'post')
+                                {
+                                    console.info('post ',req.body)
+                                }
                                 action(req,res)
                             }
                         )

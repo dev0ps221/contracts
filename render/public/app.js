@@ -96,6 +96,18 @@ app.controller('contractsApp', function($scope,$location, $sce) {
     // Return the resulting ASCII string
     return str;
   }
+  $scope.login = (event)=>{
+    event.preventDefault()
+    const email = event.target.email.value
+    const password = event.target.password.value
+    $scope.ajax('/login','POST',JSON.stringify({email,password}),(res)=>{
+      console.info(res)
+      const user = JSON.parse(res)
+      $scope.userMan.updateUser(user)
+      $scope.user = $scope.userMan.retrieveUser()
+      document.location.href = '#!/page/home';
+    })
+  }
   $scope.parse_asn = (buffer)=> {
     let index = 0;
   

@@ -68,6 +68,13 @@ app.controller('contractsApp', function($scope,$location, $sce) {
   $scope.ajax = (path,method,data,cb=data=>console.info('ajax response => ',data))=>{
     method= method ?? 'GET'
     const req = new XMLHttpRequest()
+    
+    const form = new FormData()
+    Object.keys(data).map(
+        key=>{
+            form.append(key,data[key])
+        }
+    )
     req.onload = e=>{
         const response = req.response
         if( cb && ((typeof cb) == 'function') )
@@ -80,7 +87,7 @@ app.controller('contractsApp', function($scope,$location, $sce) {
     if (method.toUpperCase() === 'POST') {
       req.setRequestHeader('X-CSRF-TOKEN', csrfToken); // set CSRF token header
     }
-    req.send(data)
+    req.send(form)
   }
 
   $scope.hex_to_ascii = (str1)=> {
@@ -100,12 +107,19 @@ app.controller('contractsApp', function($scope,$location, $sce) {
     event.preventDefault()
     const email = event.target.email.value
     const password = event.target.password.value
-    $scope.ajax('/login','POST',JSON.stringify({email,password}),(res)=>{
+    $scope.ajax('/login','POST',{email,password},(res)=>{
+      if(res && res.data)
+      {
+        const user = JSON.parse(res)
+        $scope.userMan.updateUser(user)
+        $scope.user = $scope.userMan.retrieveUser()
+        document.location.href = '#!/page/home';
+      }
+      else
+      {
+        $scope.loginErr = res
+      }
       console.info(res)
-      const user = JSON.parse(res)
-      $scope.userMan.updateUser(user)
-      $scope.user = $scope.userMan.retrieveUser()
-      document.location.href = '#!/page/home';
     })
   }
   $scope.parse_asn = (buffer)=> {

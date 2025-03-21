@@ -52,7 +52,7 @@ app.controller('contractsApp', function($scope,$location, $sce) {
   }
   if(!$scope.user && $scope.currentpath() != '/page/login')
   {
-    console.info($scope.currentpath())
+    console.info($scope.currentpath(),'is path')
     document.location.href = '#!/page/login';
   }
   $scope.currenturl = ()=>{
@@ -64,7 +64,10 @@ app.controller('contractsApp', function($scope,$location, $sce) {
         "http://"+$scope.currenturl+'/**',
         "https://"+$scope.currenturl+'/**'
     ]);
-});
+
+  
+  });
+
   $scope.ajax = (path,method,data,cb=data=>console.info('ajax response => ',data))=>{
     method= method ?? 'GET'
     const req = new XMLHttpRequest()
@@ -85,9 +88,19 @@ app.controller('contractsApp', function($scope,$location, $sce) {
     req.open(method,path)
 
     if (method.toUpperCase() === 'POST') {
+      //json
+      req.setRequestHeader('content-type', 'application/json');
       req.setRequestHeader('X-CSRF-TOKEN', csrfToken); // set CSRF token header
     }
     req.send(form)
+  }
+
+  $scope.socketPost = (path,data,cb=data=>console.info('socket message => ',data))=>{
+    $scope.socket.emit(path,data)
+    $scope.socketGet(path+'response',cb)
+  }
+  $scope.socketGet = (path,cb=data=>console.info('socket message => ',data))=>{
+    $scope.socket.on(path,cb)
   }
 
   $scope.hex_to_ascii = (str1)=> {
@@ -107,10 +120,11 @@ app.controller('contractsApp', function($scope,$location, $sce) {
     event.preventDefault()
     const email = event.target.email.value
     const password = event.target.password.value
-    $scope.ajax('/login','POST',{email,password},(res)=>{
+    $scope.socketPost('login',{email,password},(res)=>{
+      console.info('login response',res)
       if(res && res.data)
       {
-        const user = JSON.parse(res)
+        const user = res.data
         $scope.userMan.updateUser(user)
         $scope.user = $scope.userMan.retrieveUser()
         document.location.href = '#!/page/home';
@@ -283,6 +297,10 @@ app.controller('contractsApp', function($scope,$location, $sce) {
       console.log("Current route:", current);
     //   setTimeout(()=>$('.select2').select2(),800)
   });
+
+  console.info($scope.currenturl())
+  $scope.socket     = io($scope.currenturl())
+  $scope.socket.connect()
 
 });
 

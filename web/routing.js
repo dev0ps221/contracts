@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const {join} = require('path')
+const {readFileSync,statSync} = require('fs')
 class Router{
     routes = {
         get:[],post:[],put:[],delete:[]
@@ -10,6 +11,20 @@ class Router{
         this.path = path ?? this.app.x_app_path + "/render"
         this.self_routes()
     }
+    file_exists(pathfile)
+    {
+        let exists = true
+        try{
+            (statSync(pathfile))
+        }
+        catch(e){
+            exists = (e.code != 'ENOENT')
+            console.info(e.code)
+        }
+
+        console.info(pathfile,' check',exists)
+        return exists
+    }
     get_index(req,res)
     {
         this.serve_file(res,'index.html')
@@ -17,8 +32,10 @@ class Router{
     }
     serve_file(res,file_path)
     {
-        console.info('send file => ',file_path)
-        res.sendFile(join(this.path, file_path));
+        let pathfile = join(this.path, file_path)
+        console.info('serving ',file_path)
+        pathfile = (this.file_exists(pathfile)) ? pathfile : join(this.path,'notfound.html')
+        res.sendFile(pathfile);
         return this
     }
     self_routes()
